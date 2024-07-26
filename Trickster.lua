@@ -6,8 +6,7 @@
 --- BADGE_COLOR: F7433A
 --- PREFIX: Trick
 --- LOADER_VERSION_GEQ: 1.0.0
---- VERSION: Snapshot 2.0vA
-
+--- VERSION: Snapshot 2.0vB
 
 load(NFS.read(SMODS.current_mod.path .. 'util/atlas.lua'))()
 
@@ -29,7 +28,7 @@ local function randomValue()
 end
 
 local function legendarySwitch(card)
-    if randomValue() < G.GAME.probabilities.normal/2 then
+    if randomValue() < G.GAME.probabilities.normal/G.TricksterVouchers.Chance then
         local JokerNumber = random1to5()
         card.ability.extra.legendary = JokerNames[JokerNumber]
         card.ability.extra.sprite_pos.x = JokerNumber
@@ -67,7 +66,7 @@ SMODS.Joker { -- The Trickster
         else
             info_queue[#info_queue + 1] = {key = 'Trick_None', set = 'Other'}
         end
-        return {vars = {card.ability.extra.odds * (G.GAME and G.GAME.probabilities.normal or 1), card.ability.extra.prob, card.ability.extra.legendary}}
+        return {vars = {card.ability.extra.odds * (G.GAME and G.GAME.probabilities.normal or 1), G.TricksterVouchers.Chance or card.ability.extra.prob, card.ability.extra.legendary}}
     end,
     config = {extra = {
         odds = 1, prob = 2, legendary = 'None', sprite_pos = {x = 0, y = 0},
