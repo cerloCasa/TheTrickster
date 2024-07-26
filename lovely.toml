@@ -1,0 +1,13 @@
+[manifest]
+version = "1.0.0"
+dump_lua = true
+priority = 1
+
+[[patches]]
+[patches.regex]
+target = 'functions/common_events.lua'
+pattern = '0.997 then\s*\w* . .c_soul'
+position = 'at'
+payload = '''(1 - 0.003 * G.TricksterVouchers.SoulRate) then
+forced_key = 'c_soul'''
+overwrite = true

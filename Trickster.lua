@@ -6,7 +6,7 @@
 --- BADGE_COLOR: F7433A
 --- PREFIX: Trick
 --- LOADER_VERSION_GEQ: 1.0.0
---- VERSION: Snapshot 2.0vB
+--- VERSION: Snapshot 2.0vC
 
 load(NFS.read(SMODS.current_mod.path .. 'util/atlas.lua'))()
 

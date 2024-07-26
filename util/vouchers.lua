@@ -13,7 +13,7 @@ SMODS.Voucher { -- First Voucher
             '{C:green}#1# in 1{} chance to copy a',
             'random {C:legendary,E:1}Legendary{} Joker.',
             '{C:spectral}The Soul{} appears',
-            '{C:attention}2X{} times more often.'
+            '{C:attention}5X{} times more often.'
         },
     },
     loc_vars = function(self, info_queue, card)
@@ -27,7 +27,7 @@ SMODS.Voucher { -- First Voucher
     discovered = false,
     redeem = function(self)
         G.TricksterVouchers.Chance = 1
-        G.TricksterVouchers.SoulRate = 2
+        G.TricksterVouchers.SoulRate = 5
     end
 }
 
@@ -40,7 +40,7 @@ SMODS.Voucher { -- Second Voucher
             '{C:legendary,E:1}Legendary{} Joker',
             '{C:attention}The Trickster{} will copy.',
             '{C:spectral}The Soul{} appears',
-            '{C:attention}4X{} times more often.'
+            '{C:attention}10X{} times more often.'
         },
     },
     config = {},
@@ -53,6 +53,6 @@ SMODS.Voucher { -- Second Voucher
     requires = {'v_Trick_Impostor'},
     redeem = function(self)
         G.TricksterVouchers.CanSelect = true
-        G.TricksterVouchers.SoulRate = 4
+        G.TricksterVouchers.SoulRate = 10
     end
 }
