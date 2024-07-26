@@ -6,10 +6,12 @@
 --- BADGE_COLOR: F7433A
 --- PREFIX: Trick
 --- LOADER_VERSION_GEQ: 1.0.0
---- VERSION: 1.0
+--- VERSION: Snapshot 2.0vA
 
 
 load(NFS.read(SMODS.current_mod.path .. 'util/atlas.lua'))()
+
+load(NFS.read(SMODS.current_mod.path .. 'util/vouchers.lua'))()
 
 load(NFS.read(SMODS.current_mod.path .. 'util/localization.lua'))()
 function SMODS.current_mod.process_loc_text()
