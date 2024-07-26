@@ -21,7 +21,7 @@ SMODS.Voucher { -- First Voucher
 }
 
 SMODS.Voucher { -- Second Voucher
-    key = 'Second',
+    key = 'Impersonator',
     loc_txt = {
         name = 'Impersonator',
         text = {
@@ -39,7 +39,7 @@ SMODS.Voucher { -- Second Voucher
     cost = 10,
     unlocked = true,
     discovered = false,
-    requires = 'v_Trick_Impostor',
+    requires = {'v_Trick_Impostor'},
     redeem = function(self)
     end
 }
