@@ -1,12 +1,14 @@
 --- STEAMODDED HEADER
 --- MOD_NAME: The Trickster
 --- MOD_ID: Trickster
---- MOD_AUTHOR: [Cerlo]
+--- MOD_AUTHOR: [Cerlo, Eremel]
 --- MOD_DESCRIPTION: This mod adds the Trickster Joker
 --- BADGE_COLOR: F7433A
 --- PREFIX: Trick
 --- LOADER_VERSION_GEQ: 1.0.0
---- VERSION: Snapshot 2.0vC
+--- VERSION: 2.0
+
+load(NFS.read(SMODS.current_mod.path .. 'util/chooser.lua'))()
 
 load(NFS.read(SMODS.current_mod.path .. 'util/atlas.lua'))()
 
@@ -33,7 +35,7 @@ local function legendarySwitch(card)
         card.ability.extra.legendary = JokerNames[JokerNumber]
         card.ability.extra.sprite_pos.x = JokerNumber
     else
-        -- WILL SET TO NONE
+        -- SET TO NONE
         card.ability.extra.legendary = "None"
         card.ability.extra.sprite_pos.x = 0
     end
@@ -91,13 +93,55 @@ SMODS.Joker { -- The Trickster
     eternal_compat = true,
     perishable_compat = true,
     set_sprites = function(self, card, front)
-        if card.ability then
+        if card.ability and card.ability.extra then
             card.children.center:set_sprite_pos(card.ability.extra.sprite_pos)
         end
     end,
     calculate = function(self,card,context)
         if context.setting_blind then
-            legendarySwitch(card)
+            -- I changed it to "NOT" so you don't have to get the voucher each time for testing
+            if G.TricksterVouchers.CanSelect then
+                G.E_MANAGER:add_event(Event({ -- Event to check for the selection
+                    trigger = 'after',
+                    delay = 0.2,
+                    func = (function()
+                        card:juice_up()
+                        return true
+                    end)
+                }))
+                G.E_MANAGER:add_event(Event({ -- Event to trigger the UI appearing
+                    trigger = 'after',
+                    delay = 0.5,
+                    func = (function()    
+                        card.ability.extra.legendary = nil
+                        card.ability.extra.sprite_pos.x = 0
+                        card.children.center:set_sprite_pos(card.ability.extra.sprite_pos)
+                        G.SETTINGS.paused = true
+                        G.FUNCS.overlay_menu{
+                            definition = UI_JokerSelect(card),
+                            config = {no_esc = true}
+                        }
+                        G.E_MANAGER:add_event(Event({ -- Event to check for the selection
+                            trigger = 'after',
+                            delay = 0.5,
+                            func = (function()
+                                if card.ability.extra.legendary then
+                                    for k,v in ipairs(JokerNames) do
+                                        if v == card.ability.extra.legendary then
+                                            card.ability.extra.sprite_pos.x = k
+                                            card.children.center:set_sprite_pos(card.ability.extra.sprite_pos)
+                                        end
+                                    end
+                                end
+                                return card.ability.extra.legendary
+                            end)
+                        }))
+                        return true
+                    end)
+                }))
+            else
+                legendarySwitch(card)
+            end
         end
         local LegendaryName = card.ability.extra.legendary
 
@@ -112,23 +156,21 @@ SMODS.Joker { -- The Trickster
                 end
             end
             if faces > 0 then
-                if LegendaryName == "Caino" then
-                    G.E_MANAGER:add_event(Event({
-                        func = function()
-                            G.E_MANAGER:add_event(Event({
-                                func = function()
-                                    card.ability.extra.CAxmult = card.ability.extra.CAxmult + faces*card.ability.extra.CAextra
-                                    return true
+                G.E_MANAGER:add_event(Event({
+                    func = function()
+                        G.E_MANAGER:add_event(Event({
+                            func = function()
+                                card.ability.extra.CAxmult = card.ability.extra.CAxmult + faces*card.ability.extra.CAextra
+                                if LegendaryName == "Caino" then
+                                    card_eval_status_text(card, 'extra', nil, nil, nil, {message = localize{type = 'variable', key = 'a_xmult', vars = {card.ability.extra.CAxmult}}})
                                 end
-                            }))
-                            card_eval_status_text(card, 'extra', nil, nil, nil, {message = localize{type = 'variable', key = 'a_xmult', vars = {card.ability.extra.CAxmult}}})
-                            return true
-                        end
-                    }))
-                else
-                    card.ability.extra.CAxmult = card.ability.extra.CAxmult + faces * card.ability.extra.CAextra
-                end
+                                return true
+                            end
+                        }))
+                    end
+                }))
             end
+            
         end
         -- CAINO'S UPGRADE NOT GLASS
         if context.remove_playing_cards and not context.blueprint then
@@ -140,13 +182,14 @@ SMODS.Joker { -- The Trickster
             end
             if face_cards > 0 then
                 card.ability.extra.CAxmult = card.ability.extra.CAxmult + face_cards * card.ability.extra.CAextra
-                if LegendaryName == "Caino" then
-                    G.E_MANAGER:add_event(Event({
-                        func = function()
+                G.E_MANAGER:add_event(Event({
+                    func = function()
+                        if LegendaryName == "Caino" then
                             card_eval_status_text(card, 'extra', nil, nil, nil, {message = localize{type = 'variable', key = 'a_xmult', vars = {card.ability.extra.CAxmult}}})
+                        end
                             return true
-                    end}))
-                end
+                    end
+                }))
             end
         end
         -- YORICK'S UPGRADE
